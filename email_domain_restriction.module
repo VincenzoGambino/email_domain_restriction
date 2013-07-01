@@ -74,19 +74,17 @@ function email_domain_restriction_user_register_validate(&$form, &$form_state) {
   $domains = variable_get('email_domain_restriction', '');
   $domains = $domains != '' ? explode("\r\n", $domains) : array();
   $behaviour = variable_get('email_domain_restriction_behaviour', 0);
-  if (!empty($domains)) {
-    if ($behaviour == 0) {
-      foreach ($domains as $domain) {
-        if ($domain == $mail[1]) {
-          form_set_error('mail', variable_get('email_domain_restriction_message', t('Email domain is not valid')));
-        }
+  if ($behaviour == 0) {
+    foreach ($domains as $domain) {
+      if ($domain == $mail[1]) {
+        form_set_error('mail', variable_get('email_domain_restriction_message', t('Email domain is not valid')));
       }
     }
-    else {
-      foreach ($domains as $domain) {
-        if ($domain != $mail[1]) {
-          form_set_error('mail', variable_get('email_domain_restriction_message', t('Email domain is not valid')));
-        }
+  }
+  else {
+    foreach ($domains as $domain) {
+      if ($domain != $mail[1]) {
+        form_set_error('mail', variable_get('email_domain_restriction_message', t('Email domain is not valid')));
       }
     }
   }
