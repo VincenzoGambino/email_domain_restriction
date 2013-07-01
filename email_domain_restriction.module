@@ -1,13 +1,13 @@
 <?php
 
 /**
+ * @file
  * File: Domain_registration module
- * Restricts registration to people whose email addresses are of a particular domain
+ * Restricts registration to a particular email domain.
  */
 
 /**
- * Implements hook_menu
- * return string
+ * Implements hook_menu().
  */
 function email_domain_restriction_menu() {
   $items['admin/config/system/email_domain_restriction'] = array(
@@ -21,10 +21,7 @@ function email_domain_restriction_menu() {
 }
 
 /**
- * Administration form for domain registration
- * @param $form
- * @param $form_state
- * return function
+ * Implements hook_form().
  */
 function email_domain_restriction_admin_form($form, &$form_state) {
   $form['email_domain_restriction'] = array(
@@ -32,7 +29,7 @@ function email_domain_restriction_admin_form($form, &$form_state) {
     '#required' => TRUE,
     '#title' => t('Email domains'),
     '#default_value' => variable_get('email_domain_restriction', 'example.com'),
-    '#description' => t('Enter the domains you wish to restrict. One entry per line in the format (e.g. something.com)'),
+    '#description' => t('Enter the domains you wish to restrict. One domain per line:') . '<br />' . t('example.com') . '<br />' .  t('example2.com'),
   );
   $form['email_domain_restriction_message'] = array(
     '#type' => 'textfield',
@@ -41,56 +38,44 @@ function email_domain_restriction_admin_form($form, &$form_state) {
     '#default_value' => variable_get('email_domain_restriction_message', t('Email domain not valid')),
     '#description' => t('Enter the error message you want the user to see if the email address does not validate.'),
   );
-  $form['email_domain_restriction_behaviour'] = array (
+  $form['email_domain_restriction_behaviour'] = array(
     '#type' => 'radios',
     '#required' => TRUE,
-    '#title' => t('Select the action to perform on the domains listed above'),
-    '#description' => t('<b>Caution:</b> <br />If you deny the above list all other domains will be allowed.
-    </br />If you allow the list above, all other domains will be refused'),    
-    '#options' => array (
+    '#title' => 'Select the action to perform on the domains listed above',
+    '#description' => '<b>' . t('Caution:') . '</b> <br />' . t('If you deny the above list all other domains will be allowed.') . '</br />' . t('If you allow the list above, all other domains will be refused'),
+    '#options' => array(
       0 => t('Deny'),
-      1 => t('Allow')
+      1 => t('Allow'),
     ),
     '#default_value' => variable_get('email_domain_restriction_behaviour', 0),
   );
-  return system_settings_form($form); 
+  return system_settings_form($form);
 }
 
 /**
- * Implements hook_form_form_id_form_alter()
- * @param $form
- * @param $form_state
- * @param $form_id
- * Validate domain on registration
+ * Implements hook_form_form_id_form_alter().
  */
 function email_domain_restriction_form_user_register_form_alter(&$form, &$form_state, $form_id) {
   $form['#validate'][] = 'email_domain_restriction_user_register_validate';
 }
 
 /**
- * Implements hook_form_form_id_form_alter()
- * @param $form
- * @param $form_state
- * @param $form_id
- * Validate domain on profile edit
+ * Implements hook_form_form_id_form_alter().
  */
 function email_domain_restriction_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
   $form['#validate'][] = 'email_domain_restriction_user_register_validate';
 }
 
 /**
- * Custom validation function
- * @param $form
- * @param $form_state
- * Checks if the domain is on a list of allowed/deny domains.
+ * Custom validation function.
  */
 function email_domain_restriction_user_register_validate(&$form, &$form_state) {
   $mail = explode('@', $form_state['values']['mail']);
   $domains = variable_get('email_domain_restriction', '');
   $domains = $domains != '' ? explode("\r\n", $domains) : array();
-  $behaviour = variable_get('email_domain_restriction_behaviour', 0); 
+  $behaviour = variable_get('email_domain_restriction_behaviour', 0);
   if (!empty($domains)) {
-    if ($behaviour == 0){
+    if ($behaviour == 0) {
       foreach ($domains as $domain) {
         if ($domain == $mail[1]) {
           form_set_error('mail', variable_get('email_domain_restriction_message', t('Email domain is not valid')));

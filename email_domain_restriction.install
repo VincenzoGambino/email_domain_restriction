@@ -1,6 +1,16 @@
 <?php
-  function email_domain_restriction_uninstall () {
-    variable_del('email_domain_restriction');
-    variable_del('email_domain_restriction_message');
-    variable_del('email_domain_restriction_behaviour');
-  }
+
+/**
+ * @file
+ * Installation file for Email Domain Restriction module.
+ */
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function email_domain_restriction_uninstall() {
+  variable_del('email_domain_restriction');
+  variable_del('email_domain_restriction_message');
+  variable_del('email_domain_restriction_behaviour');
+}

@@ -1,4 +1,4 @@
 name = Email Domain Restriction
-description = Allor or deny email addresses of particular domains
+description = This module provides the ability to allow or deny email addresses of particular domains
 core = 7.x
-
+configure = admin/config/system/email_domain_restriction
